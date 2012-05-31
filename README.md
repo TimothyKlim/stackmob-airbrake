@@ -1,7 +1,11 @@
-# Scala Airbrake 
-Scala client for airbrakeapp.com (formerly hoptoadapp.com)
+# StackMob Scala Airbrake
+This is a Scalaz enhanced version of msingleton's Scala Airbrake client (https://github.com/msingleton/Scala-Airbrake) that uses Scalaz actors and IO.
 
 ## Usage
 ``` scala
-AirbrakeNotifier.notify(request, exception)
+val airbrake = new AirbrakeService {
+  override def getApiKey = "your-key"
+  override def getEnvironment = "development" // or staging, production, whatever...
+}
+airbrake.notifyAsync(AirbrakeNotice(exception))
 ```
