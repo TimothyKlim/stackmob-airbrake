@@ -21,8 +21,7 @@ class AibrakeServiceSpecs extends Specification { def is =
   "Prepare a notification with only an error elem if no url is provided"         ! airbrake().prepareErrorOnly ^
   "Prepare a notification with a request elem if a url is provided"              ! airbrake().prepareWithUrl ^
   "Prepare a notification with including a component if a component is provided" ! airbrake().prepareWithComponent ^
-  "Send a notification synchronously"                                            ! airbrake().sendNoticeSync ^
-  "Send a notification asynchronously"                                           ! airbrake().sendNoticeAsync ^
+  "Send a notification"                                                          ! airbrake().sendNotice ^
                                                                                  end
 
   case class airbrake() extends context {
@@ -32,7 +31,6 @@ class AibrakeServiceSpecs extends Specification { def is =
         val service = new AirbrakeService {
           override def getApiKey = key
           override def getEnvironment = environment
-          override def isSecure = true
         }
         val ex = new Exception("foobar")
         val notice = AirbrakeNotice(ex)
@@ -52,7 +50,6 @@ class AibrakeServiceSpecs extends Specification { def is =
         val service = new AirbrakeService {
           override def getApiKey = key
           override def getEnvironment = environment
-          override def isSecure = true
         }
         val ex = new Exception("foobar")
         val varKey = "foo"
@@ -79,7 +76,6 @@ class AibrakeServiceSpecs extends Specification { def is =
         val service = new AirbrakeService {
           override def getApiKey = key
           override def getEnvironment = environment
-          override def isSecure = true
         }
         val ex = new Exception("foobar")
         val varKey = "foo"
@@ -102,12 +98,11 @@ class AibrakeServiceSpecs extends Specification { def is =
       }
     }
 
-    def sendNoticeSync = {
+    def sendNotice = {
       apply {
         val service = new AirbrakeService {
           override def getApiKey = key
           override def getEnvironment = environment
-          override def isSecure = true
           override protected def sendNotification(xml: NodeSeq): IO[Int] = {
             HttpURLConnection.HTTP_OK.pure[IO]
           }
@@ -119,26 +114,6 @@ class AibrakeServiceSpecs extends Specification { def is =
         val component = "AirbrakeSpecs".some
         val notice = AirbrakeNotice(ex, new URL(uri).some, params.some, component)
         service.notifySync(notice).either must beRight.like { case code: Int => code must beEqualTo(HttpURLConnection.HTTP_OK) }
-      }
-    }
-
-    def sendNoticeAsync = {
-      apply {
-        val service = new AirbrakeService {
-          override def getApiKey = key
-          override def getEnvironment = environment
-          override def isSecure = true
-          override protected def sendNotification(xml: NodeSeq): IO[Int] = {
-            HttpURLConnection.HTTP_OK.pure[IO]
-          }
-        }
-        val ex = new Exception("foobar")
-        val varKey = "foo"
-        val uri = "http://stackmob.com"
-        val params = Map(varKey -> List("bar1", "bar2"))
-        val component = "AirbrakeSpecs".some
-        val notice = AirbrakeNotice(ex, new URL(uri).some, params.some, component)
-        service.notifyAsync(notice).either must beRight
       }
     }
 

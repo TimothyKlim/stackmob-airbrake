@@ -18,8 +18,8 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
   def getEnvironment: String
   def isSecure: Boolean = true
 
-  def notifyAsync(notice: AirbrakeNotice): Validation[Throwable, Unit] = {
-    notify(() => notify(prepareRequest(notice)).unsafePerformIO).success
+  def notifyAsync(notice: AirbrakeNotice) {
+    notify(() => notify(prepareRequest(notice)).unsafePerformIO)
   }
 
   def notifySync(notice: AirbrakeNotice): Validation[Throwable, Int] = {
