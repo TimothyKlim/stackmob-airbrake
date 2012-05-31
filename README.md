@@ -8,4 +8,6 @@ val airbrake = new AirbrakeService {
   override def getEnvironment = "development" // or staging, production, whatever...
 }
 airbrake.notifyAsync(AirbrakeNotice(exception))
+// ... or ...
+airbrake.notifySync(AirbrakeNotice(exception))
 ```
