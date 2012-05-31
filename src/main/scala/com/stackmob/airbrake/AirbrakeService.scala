@@ -19,7 +19,7 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
   def isSecure: Boolean = true
 
   def notifyAsync(notice: AirbrakeNotice) {
-    notify(() => notify(prepareRequest(notice)).unsafePerformIO)
+    submitAsync(() => notify(prepareRequest(notice)).unsafePerformIO)
   }
 
   def notifySync(notice: AirbrakeNotice): Validation[Throwable, Int] = {
@@ -90,8 +90,12 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
     "%s://api.airbrake.io/notifier_api/v2/notices".format(if (isSecure) "https" else "http")
   }
 
-  private def notify(f: () => Validation[Throwable, Int]) {
+  private def submitAsync(f: () => Validation[Throwable, Int]) {
     getRandomActor(f)
+  }
+
+  private def getRandomActor: Actor[() => Validation[Throwable, Int]] = {
+    actorList(random.nextInt(actorList.length))
   }
 
   private def airbrakeActor: Actor[() => Validation[Throwable, Int]] = {
@@ -100,10 +104,6 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
 
   private def doNotify(f: () => Validation[Throwable, Int]) {
     f()
-  }
-
-  private def getRandomActor: Actor[() => Validation[Throwable, Int]] = {
-    actorList(random.nextInt(actorList.length))
   }
 
 }
