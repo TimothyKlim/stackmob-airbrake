@@ -51,7 +51,7 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
         {formatParams(notice.params)}
         <component>{notice.component | ""}</component>
       </request>
-      ) | null}
+      ).orNull}
       <server-environment>
         <environment-name>{getEnvironment}</environment-name>
       </server-environment>
@@ -69,7 +69,7 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
       <params>
         {for((key, value) <- parameters) yield <var key={key}>{value.mkString(" ")}</var>}
       </params>
-    }) | null
+    }).orNull
   }
 
   protected def sendNotification(xml: NodeSeq): IO[Int] = io {
