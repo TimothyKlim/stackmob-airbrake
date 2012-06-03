@@ -49,7 +49,7 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
       <request>
         <url>{u.toString}</url>
         {formatParams(notice.params)}
-        <component>{notice.component | ""}</component>
+        <component>{~notice.component}</component>
       </request>
       ).orNull}
       <server-environment>
