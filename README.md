@@ -7,7 +7,9 @@ val airbrake = new AirbrakeService {
   override def getApiKey = "your-key"
   override def getEnvironment = "development" // or staging, production, whatever...
 }
-airbrake.notifyAsync(AirbrakeNotice(exception))
+airbrake.notifyAsync(AirbrakeNotice(exception)) // async (fire and forget)
 // ... or ...
-airbrake.notifySync(AirbrakeNotice(exception))
+val result: Validation[Throwable, Int] = airbrake.notifySync(AirbrakeNotice(exception)) // sync
+// ... or ...
+val result: IO[Validation[Throwable, Int] = airbrake.notify(AirbrakeNotice(exception)) // IO
 ```

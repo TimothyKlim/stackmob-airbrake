@@ -19,11 +19,15 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
   def isSecure: Boolean = true
 
   def notifyAsync(notice: AirbrakeNotice) {
-    submitAsync(() => notify(prepareRequest(notice)).unsafePerformIO)
+    submitAsync(() => notify(notice).unsafePerformIO)
   }
 
   def notifySync(notice: AirbrakeNotice): Validation[Throwable, Int] = {
-    notify(prepareRequest(notice)).unsafePerformIO
+    notify(notice).unsafePerformIO
+  }
+
+  def notify(notice: AirbrakeNotice): IO[Validation[Throwable, Int]] = {
+    notify(prepareRequest(notice))
   }
 
   def notify(xml: NodeSeq): IO[Validation[Throwable, Int]] = {
