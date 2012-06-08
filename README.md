@@ -11,5 +11,5 @@ airbrake.notifyAsync(AirbrakeNotice(exception)) // async (fire and forget)
 // ... or ...
 val result: Validation[Throwable, Int] = airbrake.notifySync(AirbrakeNotice(exception)) // sync
 // ... or ...
-val result: IO[Validation[Throwable, Int] = airbrake.notify(AirbrakeNotice(exception)) // IO
+val result: IO[Validation[Throwable, Int]] = airbrake.notify(AirbrakeNotice(exception)) // IO
 ```
