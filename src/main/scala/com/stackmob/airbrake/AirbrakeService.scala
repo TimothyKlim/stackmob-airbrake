@@ -94,19 +94,19 @@ abstract class AirbrakeService (actorPoolSize: Int = Runtime.getRuntime.availabl
     "%s://api.airbrake.io/notifier_api/v2/notices".format(if (isSecure) "https" else "http")
   }
 
-  private def submitAsync(f: () => Validation[Throwable, Int]) {
+  private def submitAsync(f: () => Unit) {
     getRandomActor(f)
   }
 
-  private def getRandomActor: Actor[() => Validation[Throwable, Int]] = {
+  private def getRandomActor: Actor[() => Unit] = {
     actorList(random.nextInt(actorList.length))
   }
 
-  private def airbrakeActor: Actor[() => Validation[Throwable, Int]] = {
+  private def airbrakeActor: Actor[() => Unit] = {
     actor(doNotify)
   }
 
-  private def doNotify(f: () => Validation[Throwable, Int]) {
+  private def doNotify(f: () => Unit) {
     f()
   }
 
